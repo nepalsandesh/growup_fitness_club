@@ -82,7 +82,7 @@ class Member(models.Model):
 
 
 class PhysicalDetail(models.Model):
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="physical_details",)
+    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="physical_details",)
     weight = models.FloatField(help_text="Kgs", blank=True)
     neck = models.FloatField(help_text="inches",blank=True)
     chest = models.FloatField(help_text="inches", blank=True)
@@ -119,7 +119,7 @@ class PackageDetails(models.Model):
         ("EVENING", "Evening"),
     )
 
-    member = models.ForeignKey(Member, on_delete=models.CASCADE, related_name="package_details")
+    member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="package_details")
     package_type = models.CharField(choices=PACKAGE_TYPE, max_length=50)
     package_period = models.CharField(choices=PACKAGE_PERIOD, max_length=20)
     convenient_time = models.CharField(choices=CONVENIENT_TIME, max_length=20)

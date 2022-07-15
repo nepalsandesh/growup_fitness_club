@@ -1,7 +1,7 @@
-from django.shortcuts import render
 from .models import Member, PackageDetails, PhysicalDetail
 from .serializers import MemberSerializer, PackageDetailsSerializer, PhysicalDetailSerializer
 from rest_framework import viewsets
+
 
 # Create your views here.
 
@@ -17,8 +17,3 @@ class PackageDetailViewset(viewsets.ModelViewSet):
 class PhysicalDetailViewset(viewsets.ModelViewSet):
     queryset = PhysicalDetail.objects.all()
     serializer_class = PhysicalDetailSerializer
-
-class Alldata(viewsets.ViewSet):
-    
-    pass
-

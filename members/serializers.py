@@ -40,8 +40,7 @@ class MemberSerializer(serializers.ModelSerializer):
         extra_fields = ['physical_details', 'package_details']
 
     def create(self, validated_data):
-        physical_detail_data = validated_data.pop("physical_details")
-        print("physical detail", physical_detail_data)
+        physical_detail_data = validated_data.pop("physical_details")   
         package_detail_data = validated_data.pop("package_details")
 
         member = Member.objects.create(**validated_data)

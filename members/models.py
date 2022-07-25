@@ -4,7 +4,7 @@ from dateutil.relativedelta import relativedelta
 
 
 class Member(models.Model):
-
+    
     MEMBER_CHOICES = (
         ("GUEST", "Guest Member"),
         ("VALID", "Valid Member"),

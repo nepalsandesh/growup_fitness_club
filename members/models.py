@@ -3,11 +3,6 @@ import datetime
 from dateutil.relativedelta import relativedelta
 
 
-class ExpiredManager(models.Manager):
-    def get_queryset(self):
-        return super(ExpiredManager, self).get_queryset().filter(is_expired=True)
-
-
 class Member(models.Model):
 
     MEMBER_CHOICES = (
@@ -128,7 +123,7 @@ class PackageDetails(models.Model):
     receipt_date = models.DateField()
     receipt_number = models.CharField(max_length=30)
     objects = models.Manager()
-    expired = ExpiredManager()
+
     
 
     status = models.BooleanField(default=True)

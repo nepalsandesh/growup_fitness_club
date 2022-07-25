@@ -47,3 +47,7 @@ class MemberSerializer(serializers.ModelSerializer):
         PhysicalDetail.objects.create(member=member, **physical_detail_data)
         PackageDetails.objects.create(member=member, **package_detail_data)
         return member
+
+    
+    # def update(self, instance, validated_data):
+        

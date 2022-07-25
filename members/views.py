@@ -22,20 +22,17 @@ class PhysicalDetailViewset(viewsets.ModelViewSet):
 
 
 class ExpiredMemberViewset(viewsets.ModelViewSet):
-        all_packages = PackageDetails.objects.all()
-        expired_packages = [x for x in all_packages if x.is_expired == True]
-        expired_packages_members = [x.member for x in expired_packages]
-        queryset = expired_packages_members
-        serializer_class =  MemberSerializer
+    all_packages = PackageDetails.objects.all()
+    expired_packages = [x for x in all_packages if x.is_expired == True]
+    expired_packages_members = [x.member for x in expired_packages]
+    queryset = expired_packages_members
+    serializer_class =  MemberSerializer
     
 
-
-# class ExpiredMembers(APIView):
-
-#     def get(self, request, format=None):
-#         all_packages = PackageDetails.objects.all()
-#         expired_packages = [x for x in all_packages if x.is_expired == True]
-#         expired_packages_members = [x.member for x in expired_packages]
-        
-#         serializer = MemberSerializer(expired_packages_members)
-#         return Response(serializer.data)
+class NonExpiredMemberViewset(viewsets.ModelViewSet):
+    all_packages = PackageDetails.objects.all()
+    non_expired_packages = [x for x in all_packages if x.is_expired == False]
+    non_expired_packages_members = [x.member for x in non_expired_packages]
+    queryset = non_expired_packages_members
+    serializer_class =  MemberSerializer
+    

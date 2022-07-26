@@ -14,8 +14,14 @@ router.register('packageDetail', views.PackageDetailViewset, basename='packagede
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
-    # path('expired-members/', views.ExpiredMembers.as_view())
+    #Model Viewsets:
+    
+    # path('', include(router.urls)),
+    
+    # path('expired-members/', views.ExpiredMemberViewset.as_view())
+    
+    #APIView:
+    path('', include('membersAPIView.urls'))
     
 ]
     

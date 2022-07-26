@@ -40,7 +40,7 @@ class MemberDetails(APIView):
     
     def get(self, request,id):
         member=self.get_object(id)
-        serializer=MemberSerializer(post)
+        serializer=MemberSerializer(member)
         return Response(serializer.data)
     
     

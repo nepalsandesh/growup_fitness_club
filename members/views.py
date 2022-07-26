@@ -36,3 +36,8 @@ class NonExpiredMemberViewset(viewsets.ModelViewSet):
     queryset = non_expired_packages_members
     serializer_class =  MemberSerializer
     
+
+
+# # APIView 
+# class MemberViewset(APIView):
+    

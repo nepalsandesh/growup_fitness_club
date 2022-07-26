@@ -6,8 +6,8 @@ from dateutil.relativedelta import relativedelta
 class Member(models.Model):
     
     MEMBER_CHOICES = (
-        ("GUEST", "Guest Member"),
-        ("VALID", "Valid Member"),
+        ("Guest", "Guest Member"),
+        ("Valid", "Valid Member"),
     )
 
     GENDER_CHOICES = (
@@ -57,7 +57,6 @@ class Member(models.Model):
     ward_no = models.IntegerField(blank=True, null=True)
     street_or_tole =  models.CharField(max_length=200, blank=True)
     country = models.CharField(max_length=100, blank=True)
-    permanent_address = models.CharField(max_length=100, blank=True)
     citizen_or_passport_num = models.CharField(max_length=200, blank=True)
     medical_problems = models.CharField(max_length=200, blank=True)
 
@@ -67,7 +66,8 @@ class Member(models.Model):
     emergency_contact_address = models.CharField(max_length=100, blank=True)
     emergency_contact_phone = models.CharField(max_length=20, blank=True)
 
-    status = models.BooleanField(default=True)
+    # this is "New" or "Renew" status
+    status = models.CharField(max_length=50, blank=True)
 
 
     def __str__(self):
@@ -98,15 +98,18 @@ class PhysicalDetail(models.Model):
 class PackageDetails(models.Model):
 
     PACKAGE_TYPE = (
-        ("Basic", "Basic(Gym & Cardio)"),
-        ("Zumba", "Zumba(with Gym & Cardio)")
+        ("Basic(Gym & Cardio)", "Basic(Gym & Cardio)"),
+        ("Zumba(with Gym & Cardio)", "Zumba(with Gym & Cardio)"),
+        ("Zumba", "Zumba")
     )
 
     PACKAGE_PERIOD = (
-        ("1", "1 Month"),
-        ("3", "3 Months"),
-        ("6", "6 Months"),
-        ("12", "1 Year"),
+        ("1 day", "1 Day"),
+        ("1 week", "1 Week"),
+        ("1 month", "1 Month"),
+        ("3 months", "3 Months"),
+        ("6 months", "6 Months"),
+        ("1 year", "1 Year"),
     )
 
     CONVENIENT_TIME = (
@@ -114,14 +117,23 @@ class PackageDetails(models.Model):
         ("EVENING", "Evening"),
     )
 
+    PAYMENT_MODE = (
+        ("CASH", "Cash"),
+        ("FONEPAY", "Fonepay"),
+    )
+
     member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="package_details")
     package_type = models.CharField(choices=PACKAGE_TYPE, max_length=50)
     package_period = models.CharField(choices=PACKAGE_PERIOD, max_length=20)
-    convenient_time = models.CharField(choices=CONVENIENT_TIME, max_length=20)
+    convenient_time = models.CharField(choices=CONVENIENT_TIME, max_length=20, blank=True)
     start_date = models.DateField()
-    received_amount = models.IntegerField(default=0)
+    total_fee = models.FloatField(help_text="In Rupees", blank=True)
+    payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50, blank=True)
+    received_amount = models.FloatField(help_text="In Rupees", default=0)
     receipt_date = models.DateField()
-    receipt_number = models.CharField(max_length=30)
+    receipt_number = models.CharField(max_length=50)
+    invoice_number = models.CharField(max_length=50)
+
     objects = models.Manager()
 
     
@@ -137,17 +149,24 @@ class PackageDetails(models.Model):
     @property
     def members_expiry_date(self):
         start_date = self.start_date
-        expiry_Date = None
-        if self.package_period == "1":
+        expiry_Date = start_date
+
+        if self.package_period == "1 day":
+            expiry_Date = start_date + relativedelta(days=1)
+
+        elif self.package_period == "1 week":
+            expiry_Date = start_date + relativedelta(weeks=1)
+
+        elif self.package_period == "1 month":
             expiry_Date = start_date + relativedelta(months=1)
         
-        elif self.package_period == "3":
+        elif self.package_period == "3 months":
             expiry_Date = start_date + relativedelta(months=3)
 
-        elif self.package_period == "6":
+        elif self.package_period == "6 months":
             expiry_Date = start_date + relativedelta(months=6)
 
-        elif self.package_period == "12":
+        elif self.package_period == "1 year":
             expiry_Date = start_date + relativedelta(months=12)
         
         return expiry_Date
@@ -159,6 +178,11 @@ class PackageDetails(models.Model):
         else:
             return False 
 
+
+    @property 
+    def due_amount(self):
+        amount = self.total_fee - self.received_amount
+        return float(amount)
 
 
 

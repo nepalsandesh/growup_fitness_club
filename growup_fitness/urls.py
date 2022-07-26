@@ -15,7 +15,6 @@ router.register('packageDetail', views.PackageDetailViewset, basename='packagede
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
-    # path('expired-members/', views.ExpiredMembers.as_view())
     
 ]
     

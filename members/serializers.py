@@ -6,12 +6,13 @@ from .models import Member, PackageDetails, PhysicalDetail
 class PackageDetailsSerializer(serializers.ModelSerializer):
     is_expired = serializers.SerializerMethodField()
     members_expiry_date = serializers.SerializerMethodField()
+    due_amount = serializers.SerializerMethodField()
 
 
     class Meta:
         model = PackageDetails  
         exclude = ['id', 'member']
-        extra_fields = ['is_expired', 'members_expiry_date']
+        extra_fields = ['is_expired', 'members_expiry_date', 'due_amount']
 
     def get_is_expired(self, instance):
         return instance.is_expired
@@ -19,6 +20,9 @@ class PackageDetailsSerializer(serializers.ModelSerializer):
 
     def get_members_expiry_date(self, instance):
         return instance.members_expiry_date
+
+    def get_due_amount(self, instance):
+        return instance.due_amount
 
 
 

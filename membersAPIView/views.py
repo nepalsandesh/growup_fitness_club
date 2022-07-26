@@ -67,16 +67,7 @@ class ExpiredMembersAPIView(APIView):
         expired_packages = [x for x in all_packages if x.is_expired == True]
         expired_members = [x.member for x in expired_packages]
         serializer=MemberSerializer(expired_members, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request):
-        serializer=MemberSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        return Response(serializer.data)   
     
 
         
@@ -90,13 +81,7 @@ class NonExpiredMembersAPIView(APIView):
         serializer=MemberSerializer(non_expired_members, many=True)
         return Response(serializer.data)
     
-    def post(self, request):
-        serializer=MemberSerializer(data=request.data)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
     
 class PhysicalDetailAPIView(APIView):

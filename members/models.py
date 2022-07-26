@@ -154,7 +154,7 @@ class PackageDetails(models.Model):
 
     @property
     def is_expired(self):
-        if self.members_expiry_date <= datetime.date.today():
+        if self.members_expiry_date < datetime.date.today():
             return True
         else:
             return False 

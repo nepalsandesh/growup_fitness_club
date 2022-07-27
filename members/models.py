@@ -66,7 +66,7 @@ class Member(models.Model):
     emergency_contact_address = models.CharField(max_length=100, blank=True)
     emergency_contact_phone = models.CharField(max_length=20, blank=True)
 
-    # this is "New" or "Renew" status
+    # this is "New" or "Renew" status string, sent by frontend
     status = models.CharField(max_length=50, blank=True)
 
 
@@ -104,8 +104,9 @@ class PackageDetails(models.Model):
     )
 
     PACKAGE_PERIOD = (
-        ("1 day", "1 Day"),
-        ("1 week", "1 Week"),
+        ("Per Day", "Per Day"),
+        ("Per Week", "Per Week"),
+        ("Per Month", "Per Month"),
         ("1 month", "1 Month"),
         ("3 months", "3 Months"),
         ("6 months", "6 Months"),
@@ -113,13 +114,13 @@ class PackageDetails(models.Model):
     )
 
     CONVENIENT_TIME = (
-        ("MORNING", "Morning"),
-        ("EVENING", "Evening"),
+        ("Morning", "Morning"),
+        ("Evening", "Evening"),
     )
 
     PAYMENT_MODE = (
-        ("CASH", "Cash"),
-        ("FONEPAY", "Fonepay"),
+        ("Cash", "Cash"),
+        ("Fonepay", "Fonepay"),
     )
 
     member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="package_details")
@@ -134,10 +135,6 @@ class PackageDetails(models.Model):
     receipt_number = models.CharField(max_length=50)
     invoice_number = models.CharField(max_length=50)
 
-    objects = models.Manager()
-
-    
-
     status = models.BooleanField(default=True)
     
 
@@ -151,11 +148,14 @@ class PackageDetails(models.Model):
         start_date = self.start_date
         expiry_Date = start_date
 
-        if self.package_period == "1 day":
+        if self.package_period == "Per Day":
             expiry_Date = start_date + relativedelta(days=1)
 
-        elif self.package_period == "1 week":
+        elif self.package_period == "Per Week":
             expiry_Date = start_date + relativedelta(weeks=1)
+
+        elif self.package_period == "Per Month":
+            expiry_Date = start_date + relativedelta(months=1)
 
         elif self.package_period == "1 month":
             expiry_Date = start_date + relativedelta(months=1)

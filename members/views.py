@@ -1,43 +1,71 @@
-from .models import Member, PackageDetails, PhysicalDetail
-from .serializers import MemberSerializer, PackageDetailsSerializer, PhysicalDetailSerializer
-from rest_framework import viewsets
+from django.http import HttpResponse
+from .models import Member, PackageDetails
+from .serializers import MemberSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.reverse import reverse
+from rest_framework import status
 
 
-# Create your views here.
-
-class MemberViewset(viewsets.ModelViewSet):
-    queryset = Member.objects.all()
-    serializer_class = MemberSerializer
-
-class PackageDetailViewset(viewsets.ModelViewSet):
-    queryset = PackageDetails.objects.all()
-    serializer_class = PackageDetailsSerializer
-
-
-class PhysicalDetailViewset(viewsets.ModelViewSet):
-    queryset = PhysicalDetail.objects.all()
-    serializer_class = PhysicalDetailSerializer
+# API Root 
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'members':reverse('members', request=request),
+        'expired-members':reverse('expired_members', request=request),
+        'non-expired-members':reverse('non_expired_members', request=request),
+    })
 
 
-class ExpiredMemberViewset(viewsets.ModelViewSet):
-    all_packages = PackageDetails.objects.all()
-    expired_packages = [x for x in all_packages if x.is_expired == True]
-    expired_packages_members = [x.member for x in expired_packages]
-    queryset = expired_packages_members
-    serializer_class =  MemberSerializer
+
+class MembersView(APIView):
+
+    def get(self, format=None):
+        members = Member.objects.all()
+        serializers = MemberSerializer(members, many=True)
+        return Response(serializers.data)
     
-
-class NonExpiredMemberViewset(viewsets.ModelViewSet):
-    all_packages = PackageDetails.objects.all()
-    non_expired_packages = [x for x in all_packages if x.is_expired == False]
-    non_expired_packages_members = [x.member for x in non_expired_packages]
-    queryset = non_expired_packages_members
-    serializer_class =  MemberSerializer
-    
+    def post(self, request):
+        print(request.data)
+        serializers = MemberSerializer(data=request.data)
+        if serializers.is_valid(raise_exception=True):
+            serializers.save()
+            return Response(serializers.data)
 
 
-# # APIView 
-# class MemberViewset(APIView):
-    
+
+class MemberDetails(APIView):
+    def get_object(self, id):
+        try:
+            return Member.objects.get(id=id)
+
+        except Member.DoesNotExist:
+            return HttpResponse(status=status.HTTP_404_NOT_FOUND)
+
+
+    def get(self, request, id):
+        member = self.get_object(id)
+        serializer = MemberSerializer(member)
+        return Response(serializer.data)
+
+
+
+
+class ExpiredMembers(APIView):
+    def get(self, request, format=None):
+        all_packages = PackageDetails.objects.all()
+        expired_packages = [x for x in all_packages if x.is_expired == True]
+        expired_packages_members = [x.member for x in expired_packages]
+        serializers = MemberSerializer(expired_packages_members, many=True)
+        return Response(serializers.data)
+
+
+
+class NonExpiredMembers(APIView):
+    def get(self, request, format=None):
+        all_packages = PackageDetails.objects.all()
+        non_expired_packages = [x for x in all_packages if x.is_expired == False]
+        non_expired_packages_members = [x.member for x in non_expired_packages]
+        serializers = MemberSerializer(non_expired_packages_members, many=True)
+        return Response(serializers.data)

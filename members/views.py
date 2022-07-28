@@ -6,12 +6,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 from rest_framework import status
-
+from rest_framework import generics
 
 # API Root 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
+        
         'members':reverse('members', request=request),
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
@@ -28,13 +29,28 @@ class MembersView(APIView):
     
     def post(self, request):
         print(request.data)
+        
+        
         serializers = MemberSerializer(data=request.data)
         if serializers.is_valid(raise_exception=True):
+            print("<<<<<<<<<<<<<<<<<Before Saving>>>>>>>>>>>>>>>")
             serializers.save()
+            print("<<<<<<<<<<<<<<<<<<After Saving>>>>>>>>>>>>>>>>")
             return Response(serializers.data)
+        print(("<<<<<<<<<<<<<<<<ERROR>>>>>>>>>>>>>"))
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class GenericsMembersView(generics.ListCreateAPIView):
+    queryset=Member.objects.all()
+    serializer_class=MemberSerializer
+    
+    
+class GenericsMemberDetailsView(generics.RetrieveUpdateAPIView):
+    queryset =Member.objects.all()
+    serializer_class = MemberSerializer
+    
 
-
+    
 class MemberDetails(APIView):
     def get_object(self, id):
         try:
@@ -49,7 +65,19 @@ class MemberDetails(APIView):
         serializer = MemberSerializer(member)
         return Response(serializer.data)
 
-
+    def put(self, request, id):
+        member= self.get_object(id=id)
+        serializer=MemberSerializer(member, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request,id):    
+        member=self.get_object(id=id)
+        member.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
 
 
 class ExpiredMembers(APIView):

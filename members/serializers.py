@@ -46,12 +46,21 @@ class MemberSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         physical_detail_data = validated_data.pop("physical_details")   
         package_detail_data = validated_data.pop("package_details")
-
+        
         member = Member.objects.create(**validated_data)
         PhysicalDetail.objects.create(member=member, **physical_detail_data)
         PackageDetails.objects.create(member=member, **package_detail_data)
         return member
 
-    
-    # def update(self, instance, validated_data):
+   
+    def update(self, instance, validated_data):
+        physical_detail_data=validated_data.pop("physical_details")
+        package_detail_data= validated_data.pop("package_details")
+        for key, value in validated_data.items():
+            setattr(instance, key, value)
+            instance.save()
+        physical_detail_data
+        package_detail_data
+        
+        
         

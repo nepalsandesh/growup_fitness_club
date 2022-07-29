@@ -38,6 +38,8 @@ class MembersView(APIView):
         print(serializers.errors)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        
+
 
 
 class MemberDetails(APIView):

@@ -11,10 +11,10 @@ class Member(models.Model):
     )
 
     GENDER_CHOICES = (
-        ("M", "Male"),
-        ("F", "Female"),
-        ("T", "Transgender"),
-        ("O", "Other")
+        ("Male", "Male"),
+        ("Female", "Female"),
+        ("Transgender", "Transgender"),
+        ("Other", "Other")
     )
 
     BLOOD_GROUP_CHOICES = (
@@ -29,26 +29,29 @@ class Member(models.Model):
     )
 
     REFERED_BY = (
-        ("SOCIAL_MEDIA", "Social_Media"),
-        ("FRIENDS", "Friends"),
-        ("OTHERS", "Others")
+        ("Social Media", "Social Media"),
+        ("Friends", "Friends"),
+        ("Others", "Others")
     )
-    
+    GYM_EXPERIENCE=(
+        ("Yes", "Yes"),
+        ("No", "No")
+    )
 
     member_type = models.CharField(max_length=20, choices=MEMBER_CHOICES)
     name = models.CharField(max_length=200, blank=True, null=True)
     current_address =  models.CharField(max_length=200, blank=True, null=True)
     dob = models.DateField(blank=True, null=True)
-    occupation = models.CharField(max_length=200, null=True, blank=True)
+    occupation = models.CharField(max_length=200, null=True, blank=True )
     telephone_home = models.CharField(max_length=20, null=True, blank=True)
     mobile = models.CharField(max_length=20, blank=True, null=True)
     gender = models.CharField(choices=GENDER_CHOICES, max_length=20, blank=True, null=True)
     blood_group = models.CharField(choices=BLOOD_GROUP_CHOICES, max_length=20, blank=True, null=True)
     email = models.EmailField(max_length=150, blank=True, null=True)
-    gym_experience = models.BooleanField(default=False)
+    gym_experience = models.CharField(max_length=150,choices=GYM_EXPERIENCE, blank=True, null=True)
     refered_by = models.CharField(choices=REFERED_BY, max_length=20, null=True, blank=True)
-    admission_date = models.DateField(blank=True, null=True)
-    admission_charge = models.FloatField(max_length=10, blank=True, null=True)
+    admission_date = models.DateField( blank=True,null=True)
+    admission_charge = models.FloatField(max_length=100, null=True, blank=True)
 
     full_name = models.CharField(max_length=150, blank=True)
     # permanent address
@@ -93,6 +96,10 @@ class PhysicalDetail(models.Model):
     status = models.BooleanField(default=True)
 
 
+    def __str__(self):
+        return str(self.member.name)
+
+
 
 
 class PackageDetails(models.Model):
@@ -107,10 +114,10 @@ class PackageDetails(models.Model):
         ("Per Day", "Per Day"),
         ("Per Week", "Per Week"),
         ("Per Month", "Per Month"),
-        ("1 month", "1 Month"),
-        ("3 months", "3 Months"),
-        ("6 months", "6 Months"),
-        ("1 year", "1 Year"),
+        ("1 Month", "1 Month"),
+        ("3 Months", "3 Months"),
+        ("6 Months", "6 Months"),
+        ("1 Year", "1 Year"),
     )
 
     CONVENIENT_TIME = (
@@ -120,7 +127,7 @@ class PackageDetails(models.Model):
 
     PAYMENT_MODE = (
         ("Cash", "Cash"),
-        ("Fonepay", "Fonepay"),
+        ("FonePay", "FonePay"),
     )
 
     member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="package_details")
@@ -130,10 +137,10 @@ class PackageDetails(models.Model):
     start_date = models.DateField()
     total_fee = models.FloatField(help_text="In Rupees", blank=True)
     payment_mode = models.CharField(choices=PAYMENT_MODE, max_length=50, blank=True)
-    received_amount = models.FloatField(help_text="In Rupees", default=0)
-    receipt_date = models.DateField()
-    receipt_number = models.CharField(max_length=50)
-    invoice_number = models.CharField(max_length=50)
+    received_amount = models.FloatField(help_text="In Rupees", default=0, null=True, blank=True)
+    receipt_date = models.DateField(blank=True, null=True)
+    receipt_number = models.CharField(max_length=50, blank=True, null=True)
+    invoice_number = models.CharField(max_length=50, blank=True, null= True)
 
     status = models.BooleanField(default=True)
     
@@ -157,18 +164,20 @@ class PackageDetails(models.Model):
         elif self.package_period == "Per Month":
             expiry_Date = start_date + relativedelta(months=1)
 
-        elif self.package_period == "1 month":
+        elif self.package_period == "1 Month":
             expiry_Date = start_date + relativedelta(months=1)
         
-        elif self.package_period == "3 months":
+        elif self.package_period == "3 Months":
             expiry_Date = start_date + relativedelta(months=3)
 
-        elif self.package_period == "6 months":
+        elif self.package_period == "6 Months":
             expiry_Date = start_date + relativedelta(months=6)
 
-        elif self.package_period == "1 year":
+        elif self.package_period == "1 Year":
             expiry_Date = start_date + relativedelta(months=12)
-        
+        print("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>")
+        print(expiry_Date)
+        print("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>")
         return expiry_Date
 
     @property

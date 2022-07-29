@@ -175,9 +175,7 @@ class PackageDetails(models.Model):
 
         elif self.package_period == "1 Year":
             expiry_Date = start_date + relativedelta(months=12)
-        print("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>")
-        print(expiry_Date)
-        print("<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>")
+
         return expiry_Date
 
     @property

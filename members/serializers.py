@@ -59,8 +59,23 @@ class MemberSerializer(serializers.ModelSerializer):
         for key, value in validated_data.items():
             setattr(instance, key, value)
             instance.save()
-        physical_detail_data
-        package_detail_data
+        
+        if physical_detail_data is not None:
+            instance_physical_detail_data = instance.physical_details
+            for key, value in physical_detail_data.items():
+                setattr(instance_physical_detail_data, key, value)
+                instance.save()
+                
+            
+        if package_detail_data is not None:
+            instance_package_detail_data = instance.package_details
+            for key, value in package_detail_data.items():
+                setattr(instance_package_detail_data, key, value)
+                instance.save()
+
+        instance.save()
+        return instance
+        
         
         
         

@@ -24,7 +24,7 @@ class MembersView(APIView):
     def get(self, format=None):
         members = Member.objects.all()
         serializers = MemberSerializer(members, many=True)
-        return Response(serializers.data)
+        return Response(serializers.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         print(request.data)
@@ -32,9 +32,7 @@ class MembersView(APIView):
         if serializers.is_valid():
             print("saved")
             serializers.save()
-            print("====================>>>>>>  data saved")
-            return Response(serializers.data)
-        print("===============<<<<<<<<error>>>>>>>>>")
+            return Response(serializers.data, status=status.HTTP_200_OK)
         print(serializers.errors)
         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -54,7 +52,31 @@ class MemberDetails(APIView):
     def get(self, request, id):
         member = self.get_object(id)
         serializer = MemberSerializer(member)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        member = self.get_object(id=id)
+        serializer = MemberSerializer(member, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def patch(self, request, id):
+        member = self.get_object(id=id)
+        serializer = MemberSerializer(member, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        
+    def delete(self, request,id):    
+        member=self.get_object(id=id)
+        member.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 

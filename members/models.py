@@ -96,6 +96,10 @@ class PhysicalDetail(models.Model):
     status = models.BooleanField(default=True)
 
 
+    def __str__(self):
+        return str(self.member.name)
+
+
 
 
 class PackageDetails(models.Model):

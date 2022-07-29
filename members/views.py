@@ -29,9 +29,14 @@ class MembersView(APIView):
     def post(self, request):
         print(request.data)
         serializers = MemberSerializer(data=request.data)
-        if serializers.is_valid(raise_exception=True):
+        if serializers.is_valid():
+            print("saved")
             serializers.save()
+            print("====================>>>>>>  data saved")
             return Response(serializers.data)
+        print("===============<<<<<<<<error>>>>>>>>>")
+        print(serializers.errors)
+        return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

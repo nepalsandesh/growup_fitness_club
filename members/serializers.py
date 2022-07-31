@@ -54,8 +54,8 @@ class MemberSerializer(serializers.ModelSerializer):
 
    
     def update(self, instance, validated_data):
-        physical_detail_data=validated_data.pop("physical_details")
-        package_detail_data= validated_data.pop("package_details")
+        physical_detail_data=validated_data.pop("physical_details",None)
+        package_detail_data= validated_data.pop("package_details", None)
         for key, value in validated_data.items():
             setattr(instance, key, value)
             instance.save()
@@ -64,14 +64,14 @@ class MemberSerializer(serializers.ModelSerializer):
             instance_physical_detail_data = instance.physical_details
             for key, value in physical_detail_data.items():
                 setattr(instance_physical_detail_data, key, value)
-                instance.save()
+                instance_physical_detail_data.save()
                 
             
         if package_detail_data is not None:
             instance_package_detail_data = instance.package_details
             for key, value in package_detail_data.items():
                 setattr(instance_package_detail_data, key, value)
-                instance.save()
+                instance_package_detail_data.save()
 
         instance.save()
         return instance

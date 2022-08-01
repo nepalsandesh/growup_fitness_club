@@ -64,11 +64,14 @@ class MemberDetails(APIView):
 
 
     def patch(self, request, id):
+        print("request data----------------->",request.data)
         member = self.get_object(id=id)
         serializer = MemberSerializer(member, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
+            print("serializer data >>>>>>>>>>>>>>>", serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
+        print("<<<<<<<<<<RESPONSE>>>>>>>>>>>",serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

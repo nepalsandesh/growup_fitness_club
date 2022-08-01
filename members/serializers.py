@@ -54,8 +54,8 @@ class MemberSerializer(serializers.ModelSerializer):
 
    
     def update(self, instance, validated_data):
-        physical_detail_data=validated_data.pop("physical_details")
-        package_detail_data= validated_data.pop("package_details")
+        physical_detail_data=validated_data.pop("physical_details", None)
+        package_detail_data= validated_data.pop("package_details", None)
         for key, value in validated_data.items():
             setattr(instance, key, value)
             instance.save()

@@ -116,68 +116,44 @@ class MembersView(generics.ListCreateAPIView):
     serializer_class=MemberSerializer
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     search_fields = ['^name']
-    filterset_fields=['package_details__package_type']
-    
-
+    filterset_fields=['name','district']
      
 class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
     queryset =Member.objects.all()
     serializer_class = MemberSerializer
     lookup_field='id'
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
    
     
 class ExpiredMembers(generics.ListAPIView):
-    queryset=Member.objects.all()
+    # queryset=PackageDetails.objects.filter()
     serializer_class=MemberSerializer
     
     def get_queryset(self):
         all_packages = PackageDetails.objects.all()
-        
-        
         expired_packages = [x for x in all_packages if x.is_expired == True]
         expired_packages_members = [x.member for x in expired_packages]
-        return expired_packages_members
-        
+        expired_ids = [m.pk for m in expired_packages_members]
+        expired_queryset = Member.objects.filter(pk__in=expired_ids)
+        return expired_queryset
+
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     search_fields = ['^name']
-    filterset_fields=['package_details__package_type']
+    filterset_fields=['member_type',]
+    
+
+
 class NonExpiredMembers(generics.ListAPIView):
-    queryset=Member.objects.all()
+    # queryset=Member.objects.all()
     serializer_class=MemberSerializer
     
     def get_queryset(self):
-        # today_date=datetime.date.today
-        # if self.PackageDetails.package_period == "Per Day":
-        #     STARTDATELIMIT =today_date - relativedelta(days=1)
-
-        # elif self.PackageDetails.package_period == "Per Week":
-        #     STARTDATELIMIT = today_date - relativedelta(weeks=1)
-
-        # elif self.PackageDetails.package_period == "Per Month":
-        #     STARTDATELIMIT = today_date - relativedelta(months=1)
-
-        # elif self.PackageDetails.package_period == "1 Month":
-        #     STARTDATELIMIT= today_date - relativedelta(months=1)
-        
-        # elif self.PackageDetails.package_period == "3 Months":
-        #     STARTDATELIMIT = today_date - relativedelta(months=3)
-
-        # elif self.PackageDetails.package_period == "6 Months":
-        #     STARTDATELIMIT = today_date - relativedelta(months=6)
-
-        # elif self.PackageDetails.package_period == "1 Year":
-            # STARTDATELIMIT = today_date - relativedelta(months=12)
-        
-        
-        
-        
         all_packages = PackageDetails.objects.all()
-        
         non_expired_packages = [x for x in all_packages if x.is_expired == False]
         non_expired_packages_members = [x.member for x in non_expired_packages]
-        
-        return non_expired_packages_members
-      
-    
+        non_expired_ids = [m.pk for m in non_expired_packages_members]
+        non_expired_queryset = Member.objects.filter(pk__in=non_expired_ids)
+        return non_expired_queryset
+
+    filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+    search_fields = ['^name']
+    filterset_fields=['member_type',]

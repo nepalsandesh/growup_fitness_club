@@ -50,7 +50,7 @@ class Member(models.Model):
     email = models.EmailField(max_length=150, blank=True, null=True)
     gym_experience = models.CharField(max_length=150,choices=GYM_EXPERIENCE, blank=True, null=True)
     refered_by = models.CharField(choices=REFERED_BY, max_length=20, null=True, blank=True)
-    admission_date = models.DateField( blank=True,null=True)
+    admission_date = models.DateField(blank=True,null=True)
     admission_charge = models.FloatField(max_length=100, null=True, blank=True)
 
     full_name = models.CharField(max_length=150, blank=True)
@@ -184,8 +184,6 @@ class PackageDetails(models.Model):
             return True
         else:
             return False 
-
-
 
     @property 
     def due_amount(self):

@@ -125,22 +125,36 @@ class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
    
     
 class ExpiredMembers(generics.ListAPIView):
-    queryset=Member.objects.all()
+    # queryset=PackageDetails.objects.filter()
     serializer_class=MemberSerializer
     
     def get_queryset(self):
         all_packages = PackageDetails.objects.all()
         expired_packages = [x for x in all_packages if x.is_expired == True]
         expired_packages_members = [x.member for x in expired_packages]
-        return expired_packages_members
+        expired_ids = [m.pk for m in expired_packages_members]
+        expired_queryset = Member.objects.filter(pk__in=expired_ids)
+        return expired_queryset
+
+    filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+    search_fields = ['^name']
+    filterset_fields=['member_type',]
     
+
+
 class NonExpiredMembers(generics.ListAPIView):
-    queryset=Member.objects.all()
+    # queryset=Member.objects.all()
     serializer_class=MemberSerializer
     
     def get_queryset(self):
         all_packages = PackageDetails.objects.all()
         non_expired_packages = [x for x in all_packages if x.is_expired == False]
         non_expired_packages_members = [x.member for x in non_expired_packages]
-        return non_expired_packages_members
+        non_expired_ids = [m.pk for m in non_expired_packages_members]
+        non_expired_queryset = Member.objects.filter(pk__in=non_expired_ids)
+        return non_expired_queryset
+
+    filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+    search_fields = ['^name']
+    filterset_fields=['member_type',]
     

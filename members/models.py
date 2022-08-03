@@ -186,6 +186,7 @@ class PackageDetails(models.Model):
             return False 
 
 
+
     @property 
     def due_amount(self):
         amount = self.total_fee - self.received_amount

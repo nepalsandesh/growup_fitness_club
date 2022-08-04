@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-
+from .helper import AllDailyCountData
 # API Root 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -17,6 +17,7 @@ def api_root(request, format=None):
         'members':reverse('members', request=request),
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
+        'daily-count': reverse('daily-admission-data', request=request),
     })
 
 
@@ -171,6 +172,20 @@ class NonExpiredMembers(generics.ListAPIView):
         return non_expired_queryset
 
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+
+    search_fields = ['^name']
+    filterset_fields=['member_type','package_details__expiry_date']
+    
+    
+# class DailyDataOfMembers(generics.ListAPIView):
+class DailyAdmissionData(APIView):
+    
+    def get(self,format=None):
+        context=AllDailyCountData()
+        
+        return Response(context, status=status.HTTP_200_OK)
+
     search_fields = ['name']
     filterset_fields=['member_type', ]
     
+

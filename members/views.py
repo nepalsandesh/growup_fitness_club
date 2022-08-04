@@ -185,7 +185,6 @@ class DailyAdmissionData(APIView):
         
         return Response(context, status=status.HTTP_200_OK)
 
-    search_fields = ['name']
-    filterset_fields=['member_type', ]
+    
     
 

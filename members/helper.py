@@ -35,8 +35,9 @@ def AllDailyCountData():
     
     today_date=[datetime.date.today()]
     today_date=datetostr(today_date)[0]
+    BASE_DATE=20220601
     
-    for i in range(20220601,int(today_date)+1):
+    for i in range(BASE_DATE,int(today_date)+1):
         all_dailycount[str(i)]=0
     
     all_dailycount[str_date[0]]=1

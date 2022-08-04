@@ -69,6 +69,18 @@ def api_root(request, format=None):
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+    # def patch(self, request, id):
+    #     print("request data----------------->",request.data)
+    #     member = self.get_object(id=id)
+    #     serializer = MemberSerializer(member, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         print("serializer data >>>>>>>>>>>>>>>", serializer.data)
+    #         return Response(serializer.data, status=status.HTTP_200_OK)
+    #     print("<<<<<<<<<<RESPONSE>>>>>>>>>>>",serializer.errors)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     # def patch(self, request, id):
     #     member = self.get_object(id=id)
     #     serializer = MemberSerializer(member, data=request.data, partial=True)
@@ -76,6 +88,7 @@ def api_root(request, format=None):
     #         serializer.save()
     #         return Response(serializer.data, status=status.HTTP_200_OK)
     #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
         
@@ -120,6 +133,9 @@ class MembersView(generics.ListCreateAPIView):
     filterset_fields=['name','district']
      
 class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
+    def get_serializer_context(self):
+        print(self.request.data)
+
     queryset =Member.objects.all()
     serializer_class = MemberSerializer
     lookup_field='id'
@@ -138,7 +154,7 @@ class ExpiredMembers(generics.ListAPIView):
         return expired_queryset
 
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
-    search_fields = ['^name']
+    search_fields = ['name']
     filterset_fields=['member_type',]
     
 
@@ -156,6 +172,7 @@ class NonExpiredMembers(generics.ListAPIView):
         return non_expired_queryset
 
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
+
     search_fields = ['^name']
     filterset_fields=['member_type','package_details__expiry_date']
     
@@ -167,3 +184,8 @@ class DailyAdmissionData(APIView):
         context=AllDailyCountData()
         
         return Response(context, status=status.HTTP_200_OK)
+
+    search_fields = ['name']
+    filterset_fields=['member_type', ]
+    
+

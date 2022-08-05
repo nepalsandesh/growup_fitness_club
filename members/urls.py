@@ -1,5 +1,5 @@
 from django.urls import path, include
-from .views import api_root, MembersView, MemberDetails, ExpiredMembers, NonExpiredMembers,DailyAdmissionData
+from .views import api_root, MembersView, MemberDetails, ExpiredMembers, NonExpiredMembers,DailyAdmissionData,SevendaysDailyAdmissionData
 
 urlpatterns = [
     path('', api_root),
@@ -8,6 +8,7 @@ urlpatterns = [
     path('expired-members/', ExpiredMembers.as_view(), name='expired_members'),
     path('non-expired-members/', NonExpiredMembers.as_view(), name='non_expired_members'),
     path("daily-admission-data/", DailyAdmissionData.as_view(),name='daily-admission-data'),
+    path("sevendays-daily-admission-data/", SevendaysDailyAdmissionData.as_view(),name='sevendays-daily-admission-data'),
     
    ]
 

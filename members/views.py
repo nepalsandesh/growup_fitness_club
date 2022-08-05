@@ -10,6 +10,7 @@ from rest_framework import generics
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 from .helper import AllDailyCountData
+
 # API Root 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -18,6 +19,7 @@ def api_root(request, format=None):
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
         'daily-count': reverse('daily-admission-data', request=request),
+        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
     })
 
 
@@ -187,4 +189,8 @@ class DailyAdmissionData(APIView):
 
     
     
-
+class SevendaysDailyAdmissionData(APIView):
+    def get(self,format=None):
+        context=AllDailyCountData()
+        context=context[-7:]
+        return Response(context, status=status.HTTP_200_OK)

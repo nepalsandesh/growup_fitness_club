@@ -9,7 +9,10 @@ from rest_framework import status
 from rest_framework import generics
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
-from .helper import AllDailyCountData
+from .dailydatagenerator import AllDailyCountData, SevendaysDailyCountData
+from .weeklydatagenerator import Lastfourweeks_WeeklyCountData
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+
 # API Root 
 @api_view(['GET'])
 def api_root(request, format=None):
@@ -18,6 +21,9 @@ def api_root(request, format=None):
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
         'daily-count': reverse('daily-admission-data', request=request),
+        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
+        'four weeks-weekly-count': reverse('fourweeks-weekly-admission-data', request=request),
+
     })
 
 
@@ -123,14 +129,19 @@ def api_root(request, format=None):
     
 ##GENERICS CLASSES:
     
+class BasicPagination(PageNumberPagination):
+    page_size_query_param = 'limit'
+    page_size=10
     
+
     
 class MembersView(generics.ListCreateAPIView):
     queryset=Member.objects.all()
     serializer_class=MemberSerializer
+    pagination_class=BasicPagination
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     search_fields = ['name']
-    filterset_fields=['name','district']
+    filterset_fields=['member_type']
      
 class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
@@ -142,9 +153,9 @@ class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
    
     
 class ExpiredMembers(generics.ListAPIView):
-    # queryset=PackageDetails.objects.filter()
     serializer_class=MemberSerializer
-    
+    pagination_class=BasicPagination
+
     def get_queryset(self):
         all_packages = PackageDetails.objects.all()
         expired_packages = [x for x in all_packages if x.is_expired == True]
@@ -155,14 +166,14 @@ class ExpiredMembers(generics.ListAPIView):
 
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
     search_fields = ['name']
-    filterset_fields=['member_type',]
+    filterset_fields=['member_type','name']
     
 
 
 class NonExpiredMembers(generics.ListAPIView):
-    # queryset=Member.objects.all()
     serializer_class=MemberSerializer
-    
+    pagination_class=BasicPagination
+
     def get_queryset(self):
         all_packages = PackageDetails.objects.all()
         non_expired_packages = [x for x in all_packages if x.is_expired == False]
@@ -173,18 +184,48 @@ class NonExpiredMembers(generics.ListAPIView):
 
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
 
-    search_fields = ['^name']
-    filterset_fields=['member_type','package_details__expiry_date']
+    search_fields = ['name']
+    filterset_fields=['member_type']
     
     
-# class DailyDataOfMembers(generics.ListAPIView):
-class DailyAdmissionData(APIView):
-    
-    def get(self,format=None):
-        context=AllDailyCountData()
+class DailyAdmissionData(APIView, PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'limit'
+    def get(self, request):     
+        context=AllDailyCountData()  
         
+        results = self.paginate_queryset(context, request, view=self)
+        
+        return self.get_paginated_response(results)
+        
+    
+    
+class SevendaysDailyAdmissionData(APIView):
+    def get(self,format=None):
+        context=SevendaysDailyCountData()
         return Response(context, status=status.HTTP_200_OK)
 
-    
+
+class FourweeksWeeklyAdmissionData(APIView):
+    def get(self,format=None):
+        context=Lastfourweeks_WeeklyCountData()
+        return Response(context, status=status.HTTP_200_OK)
     
 
+    
+class DailyAdmissionDataFiltering(APIView, PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'limit'
+    def get(self, request, datequery):
+        context=AllDailyCountData()
+        selected_context=[]
+        dates=datequery.split('to')
+        print(dates)
+        for i in context:
+            if i['day']>=dates[0] and i['day']<=dates[1]:
+                selected_context.append(i)
+        
+        results = self.paginate_queryset(selected_context, request, view=self)
+        
+        return self.get_paginated_response(results)
+        

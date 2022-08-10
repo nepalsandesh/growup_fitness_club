@@ -30,9 +30,9 @@ def api_root(request, format=None):
         'members':reverse('members', request=request),
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
-        'daily-count': reverse('daily-admission-data', request=request),
-        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
-        'four weeks-weekly-count': reverse('fourweeks-weekly-admission-data', request=request),
+        'daily-count': reverse('daily_admission_data', request=request),
+        'sevendays-daily-count': reverse('sevendays_daily_admission_data', request=request),
+        'four-weeks-weekly-count': reverse('fourweeks_weekly_admission_data', request=request),
 
     })
 
@@ -44,19 +44,6 @@ class BasicPagination(PageNumberPagination):
     page_size=10
     
 
-# class HasStaffPermission(BasePermission):
-#     def has_object_permission(self, request, view, obj):
-#         if request.user == obj.author:
-#             return True
-#         else:
-#             return False
-    
-
-#     def has_permission(self, request, view):
-#         if request.user.user_type == "ST":
-#             return True
-#         return False
-
     
 class MembersView(generics.ListCreateAPIView):
     queryset=Member.objects.all()
@@ -66,6 +53,7 @@ class MembersView(generics.ListCreateAPIView):
     search_fields = ['name','full_name','status','district','local_gov']
     filterset_fields=['member_type']
      
+# Update and delete 
 class MemberDetails(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
         print(self.request.data)

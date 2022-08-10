@@ -1,4 +1,6 @@
-from django.http import HttpResponse
+from re import L
+from rest_framework.permissions import BasePermission
+
 from .models import Member, PackageDetails
 from .serializers import MemberSerializer
 from rest_framework.views import APIView
@@ -12,6 +14,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .dailydatagenerator import AllDailyCountData, SevendaysDailyCountData
 from .weeklydatagenerator import Lastfourweeks_WeeklyCountData
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
+from rest_framework.permissions import IsAdminUser
+
+
+
 
 # API Root 
 @api_view(['GET'])
@@ -26,106 +32,6 @@ def api_root(request, format=None):
 
     })
 
-
-##APIView CLASSES:
-
-
-
-# class MembersView(APIView):
-
-#     def get(self, format=None):
-#         members = Member.objects.all()
-#         serializers = MemberSerializer(members, many=True)
-#         return Response(serializers.data, status=status.HTTP_200_OK)
-    
-#     def post(self, request):
-#         print(request.data)
-#         serializers = MemberSerializer(data=request.data)
-#         if serializers.is_valid():
-#             print("saved")
-#             serializers.save()
-#             return Response(serializers.data, status=status.HTTP_200_OK)
-#         print(serializers.errors)
-#         return Response(serializers.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        
-
-
-
-# class MemberDetails(APIView):
-#     def get_object(self, id):
-#         try:
-#             return Member.objects.get(id=id)
-
-    #     except Member.DoesNotExist:
-    #         return HttpResponse(status=status.HTTP_404_NOT_FOUND)
-
-
-    # def get(self, request, id):
-    #     member = self.get_object(id)
-    #     serializer = MemberSerializer(member)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # def put(self, request, id):
-    #     member = self.get_object(id=id)
-    #     serializer = MemberSerializer(member, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-    # def patch(self, request, id):
-    #     print("request data----------------->",request.data)
-    #     member = self.get_object(id=id)
-    #     serializer = MemberSerializer(member, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         print("serializer data >>>>>>>>>>>>>>>", serializer.data)
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     print("<<<<<<<<<<RESPONSE>>>>>>>>>>>",serializer.errors)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # def patch(self, request, id):
-    #     member = self.get_object(id=id)
-    #     serializer = MemberSerializer(member, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_200_OK)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-
-        
-#     def delete(self, request,id):    
-#         member=self.get_object(id=id)
-#         member.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-# class ExpiredMembers(APIView):
-#     def get(self, request, format=None):
-#         all_packages = PackageDetails.objects.all()
-#         expired_packages = [x for x in all_packages if x.is_expired == True]
-#         expired_packages_members = [x.member for x in expired_packages]
-#         serializers = MemberSerializer(expired_packages_members, many=True)
-#         return Response(serializers.data)
-
-
-
-# class NonExpiredMembers(APIView):
-#     def get(self, request, format=None):
-#         all_packages = PackageDetails.objects.all()
-#         non_expired_packages = [x for x in all_packages if x.is_expired == False]
-#         non_expired_packages_members = [x.member for x in non_expired_packages]
-#         serializers = MemberSerializer(non_expired_packages_members, many=True)
-#         return Response(serializers.data)
-    
-    
-    
     
 ##GENERICS CLASSES:
     
@@ -133,6 +39,19 @@ class BasicPagination(PageNumberPagination):
     page_size_query_param = 'limit'
     page_size=10
     
+
+# class HasStaffPermission(BasePermission):
+#     def has_object_permission(self, request, view, obj):
+#         if request.user == obj.author:
+#             return True
+#         else:
+#             return False
+    
+
+#     def has_permission(self, request, view):
+#         if request.user.user_type == "ST":
+#             return True
+#         return False
 
     
 class MembersView(generics.ListCreateAPIView):
@@ -143,7 +62,7 @@ class MembersView(generics.ListCreateAPIView):
     search_fields = ['name']
     filterset_fields=['member_type']
      
-class MemberDetails( generics.RetrieveUpdateDestroyAPIView):
+class MemberDetails(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
         print(self.request.data)
 

@@ -8,10 +8,10 @@ urlpatterns = [
     path('members/<int:id>/', MemberDetails.as_view(), name='member_details'),
     path('expired-members/', ExpiredMembers.as_view(), name='expired_members'),
     path('non-expired-members/', NonExpiredMembers.as_view(), name='non_expired_members'),
-    path("daily-admission-data/", DailyAdmissionData.as_view(),name='daily_admission_data'),
-    path("sevendays-daily-admission-data/", SevendaysDailyAdmissionData.as_view(),name='sevendays_daily_admission_data'),
-    path("fourweeks-weekly-admission-data/", FourweeksWeeklyAdmissionData.as_view(),name='fourweeks_weekly_admission_data'),
-    path("daily-admission-data/<str:datequery>/", DailyAdmissionDataFiltering.as_view(), name='testing'),
+    path("daily-admission-data/", DailyAdmissionData.as_view(),name='daily-admission-data'),
+    path("sevendays-daily-admission-data/", SevendaysDailyAdmissionData.as_view(),name='sevendays-daily-admission-data'),
+    path("fourweeks-weekly-admission-data/", FourweeksWeeklyAdmissionData.as_view(),name='fourweeks-weekly-admission-data'),
+    
 
    ]
 

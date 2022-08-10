@@ -40,19 +40,6 @@ class BasicPagination(PageNumberPagination):
     page_size=10
     
 
-# class HasStaffPermission(BasePermission):
-#     def has_object_permission(self, request, view, obj):
-#         if request.user == obj.author:
-#             return True
-#         else:
-#             return False
-    
-
-#     def has_permission(self, request, view):
-#         if request.user.user_type == "ST":
-#             return True
-#         return False
-
     
 class MembersView(generics.ListCreateAPIView):
     queryset=Member.objects.all()
@@ -62,6 +49,7 @@ class MembersView(generics.ListCreateAPIView):
     search_fields = ['name']
     filterset_fields=['member_type']
      
+# Update and delete 
 class MemberDetails(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
         print(self.request.data)

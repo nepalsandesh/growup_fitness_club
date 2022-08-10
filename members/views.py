@@ -26,9 +26,9 @@ def api_root(request, format=None):
         'members':reverse('members', request=request),
         'expired-members':reverse('expired_members', request=request),
         'non-expired-members':reverse('non_expired_members', request=request),
-        'daily-count': reverse('daily-admission-data', request=request),
-        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
-        'four weeks-weekly-count': reverse('fourweeks-weekly-admission-data', request=request),
+        'daily-count': reverse('daily_admission_data', request=request),
+        'sevendays-daily-count': reverse('sevendays_daily_admission_data', request=request),
+        'four-weeks-weekly-count': reverse('fourweeks_weekly_admission_data', request=request),
 
     })
 

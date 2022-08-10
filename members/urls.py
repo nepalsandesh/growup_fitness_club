@@ -11,7 +11,6 @@ urlpatterns = [
     path("daily-admission-data/", DailyAdmissionData.as_view(),name='daily-admission-data'),
     path("sevendays-daily-admission-data/", SevendaysDailyAdmissionData.as_view(),name='sevendays-daily-admission-data'),
     path("fourweeks-weekly-admission-data/", FourweeksWeeklyAdmissionData.as_view(),name='fourweeks-weekly-admission-data'),
-    path("daily-admission-data/<str:datequery>/", DailyAdmissionDataFiltering.as_view(), name='testing'),
-
+    
    ]
 

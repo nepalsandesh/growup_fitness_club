@@ -8,6 +8,10 @@ from .models import CustomUser
 from rest_framework.decorators import api_view
 from rest_framework.reverse import reverse
 
+from rest_framework import generics
+from .serializers import ChangePasswordSerializer
+from rest_framework.permissions import IsAuthenticated 
+
 
 
 # API Root 
@@ -21,27 +25,26 @@ def api_root(request, format=None):
     })
 
 
-class RegisterView(GenericAPIView):
-    authentication_classes = []
-    permission_classes = [AllowAny]
-    serializer_class = UserSerializer
+#  # This view is commented because we dont need registeration from frontend
+# class RegisterView(GenericAPIView):
+#     authentication_classes = []
+#     permission_classes = [AllowAny]
+#     serializer_class = UserSerializer
 
-    def post(self, request, *args, **kwargs):
-        # print("request data---------------->", request.data)
-        serializer = UserSerializer(data=request.data)
+#     def post(self, request, *args, **kwargs):
+#         # print("request data---------------->", request.data)
+#         serializer = UserSerializer(data=request.data)
         
-        if serializer.is_valid():
-            # print(serializer.data)
-            serializer.save()
-            return Response({"email":request.data["email"],"message":"account created"},status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+#         if serializer.is_valid():
+#             # print(serializer.data)
+#             serializer.save()
+#             return Response({"email":request.data["email"],"message":"account created"},status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
 
 #change password
-from rest_framework import generics
-from .serializers import ChangePasswordSerializer
-from rest_framework.permissions import IsAuthenticated   
+  
 
 
 class ChangePasswordView(generics.UpdateAPIView):

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'members',
     'django_filters',
     'authusers',
+    'drf_yasg'
     
 ]
 
@@ -172,9 +173,8 @@ REST_FRAMEWORK = {
     # 'rest_framework.permissions.IsAuthenticated',
     # ],
 
-    
-    
 }
+
 
 
 SIMPLE_JWT = {

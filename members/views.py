@@ -1,6 +1,4 @@
-from re import L
 from rest_framework.permissions import BasePermission
-
 from .models import Member, PackageDetails
 from .serializers import MemberSerializer
 from rest_framework.views import APIView
@@ -14,27 +12,10 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .dailydatagenerator import AllDailyCountData, SevendaysDailyCountData
 from .weeklydatagenerator import Lastfourweeks_WeeklyCountData
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
-
 from datetime import date
-
 from rest_framework.permissions import IsAdminUser
 
 
-
-
-
-# API Root 
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'members':reverse('members', request=request),
-        'expired-members':reverse('expired_members', request=request),
-        'non-expired-members':reverse('non_expired_members', request=request),
-        'daily-count': reverse('daily_admission_data', request=request),
-        'sevendays-daily-count': reverse('sevendays_daily_admission_data', request=request),
-        'four-weeks-weekly-count': reverse('fourweeks_weekly_admission_data', request=request),
-
-    })
 
     
 ##GENERICS CLASSES:
@@ -55,8 +36,8 @@ class MembersView(generics.ListCreateAPIView):
      
 # Update and delete 
 class MemberDetails(generics.RetrieveUpdateDestroyAPIView):
-    def get_serializer_context(self):
-        print(self.request.data)
+    # def get_serializer_context(self):
+    #     print(self.request.data)
 
     queryset =Member.objects.all()
     serializer_class = MemberSerializer

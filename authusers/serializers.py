@@ -1,7 +1,8 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from authusers.models import CustomUser
 
-class UserSerializer(ModelSerializer):
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = "__all__"
@@ -9,13 +10,7 @@ class UserSerializer(ModelSerializer):
     def create(self, data):
         return CustomUser.objects.create_user(**data)
 
-    # def update(self, instance, validated_data):
-    #     for key,value in validated_data.items():
-    #         setattr(instance, key, value)
-    #         instance.save()
 
-
-from rest_framework import serializers
 class ChangePasswordSerializer(serializers.Serializer):
     model = CustomUser
 

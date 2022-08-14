@@ -36,6 +36,8 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, null=True, blank=True,unique=True)
     user_type = models.CharField(max_length=20, choices=UserType.choices, default=UserType.STAFF)
     email = models.CharField(verbose_name="Email or Phone", max_length=255, unique=True, db_index=True)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

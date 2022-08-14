@@ -13,9 +13,25 @@ from .dailydatagenerator import AllDailyCountData, SevendaysDailyCountData
 from .weeklydatagenerator import Lastfourweeks_WeeklyCountData
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from datetime import date
-from rest_framework.permissions import IsAdminUser
+
+# from rest_framework.permissions import IsAdminUser
 
 
+
+
+
+# API Root 
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'members':reverse('members', request=request),
+        'expired-members':reverse('expired_members', request=request),
+        'non-expired-members':reverse('non_expired_members', request=request),
+        'daily-count': reverse('daily-admission-data', request=request),
+        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
+        'four weeks-weekly-count': reverse('fourweeks-weekly-admission-data', request=request),
+
+    })
 
     
 ##GENERICS CLASSES:
@@ -23,8 +39,6 @@ from rest_framework.permissions import IsAdminUser
 class BasicPagination(PageNumberPagination):
     page_size_query_param = 'limit'
     page_size=10
-    
-
     
 class MembersView(generics.ListCreateAPIView):
     queryset=Member.objects.all()
@@ -36,9 +50,6 @@ class MembersView(generics.ListCreateAPIView):
      
 # Update and delete 
 class MemberDetails(generics.RetrieveUpdateDestroyAPIView):
-    # def get_serializer_context(self):
-    #     print(self.request.data)
-
     queryset =Member.objects.all()
     serializer_class = MemberSerializer
     lookup_field='id'

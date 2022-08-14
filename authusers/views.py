@@ -13,15 +13,16 @@ from .serializers import ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated 
 
 
-
+from rest_framework.views import APIView
 # API Root 
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'token_obtain_pair':reverse('token_obtain_pair', request=request),
+        'login':reverse('login', request=request),
         'token_refresh':reverse('token_refresh', request=request),
-        'token_verify':reverse('token_obtain_pair', request=request),
+        'token_verify':reverse('token_verify', request=request),
         'changepassword':reverse('changepassword', request=request),
+        'userprofile':reverse('userprofile', request=request),
     })
 
 
@@ -81,3 +82,28 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response(response)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserProfileView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    model = CustomUser
+    permission_classes = (IsAuthenticated,)
+    
+    def get(self,request,*args, **kwargs):
+        
+        obj=self.request.user
+        
+        if obj.username is not None:
+            context = {
+                    'username': obj.username,
+                    'code': status.HTTP_200_OK,
+                    'usertype': obj.user_type,
+                    
+                }
+            return Response(context,status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    
+class LogoutAPIView(APIView):
+    def get(self, request):
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)

@@ -51,7 +51,7 @@ class Member(models.Model):
     gym_experience = models.CharField(max_length=150,choices=GYM_EXPERIENCE, blank=True, null=True)
     refered_by = models.CharField(choices=REFERED_BY, max_length=20, null=True, blank=True)
     admission_date = models.DateField(blank=True,null=True)
-    admission_charge = models.FloatField(max_length=100, null=True, blank=True)
+    admission_charge = models.FloatField(max_length=100, default=0,null=True, blank=True)
 
     full_name = models.CharField(max_length=150)
     # permanent address
@@ -135,7 +135,7 @@ class PackageDetails(models.Model):
     package_period = models.CharField(choices=PACKAGE_PERIOD, max_length=20)
     convenient_time = models.CharField(choices=CONVENIENT_TIME,max_length=50)
     start_date = models.DateField()
-    total_fee = models.FloatField(help_text="In Rupees", blank=True)
+    package_fee = models.FloatField(help_text="In Rupees", default=0)
     payment_mode = models.CharField(choices=PAYMENT_MODE,max_length=50)
     received_amount = models.FloatField(help_text="In Rupees", default=0, null=True, blank=True)
     receipt_date = models.DateField(blank=True, null=True)
@@ -185,9 +185,11 @@ class PackageDetails(models.Model):
         else:
             return False 
 
+    
+    
     @property 
     def due_amount(self):
-        amount = self.total_fee - self.received_amount
+        amount = self.package_fee + self.member.admission_charge - self.received_amount
         return float(amount)
 
 

@@ -97,7 +97,7 @@ class NonExpiredMembers(generics.ListAPIView):
     filter_backends = [filters.SearchFilter,DjangoFilterBackend]
 
     search_fields = ['name','full_name','status','district','local_gov']
-    filterset_fields=['member_type']
+    filterset_fields=['member_type','status']
     
 
     

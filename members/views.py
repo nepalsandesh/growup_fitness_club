@@ -14,25 +14,6 @@ from .weeklydatagenerator import Lastfourweeks_WeeklyCountData
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from datetime import date
 
-# from rest_framework.permissions import IsAdminUser
-
-
-
-
-
-# API Root 
-@api_view(['GET'])
-def api_root(request, format=None):
-    return Response({
-        'members':reverse('members', request=request),
-        'expired-members':reverse('expired_members', request=request),
-        'non-expired-members':reverse('non_expired_members', request=request),
-        'daily-count': reverse('daily-admission-data', request=request),
-        'sevendays-daily-count': reverse('sevendays-daily-admission-data', request=request),
-        'four weeks-weekly-count': reverse('fourweeks-weekly-admission-data', request=request),
-
-    })
-
     
 ##GENERICS CLASSES:
     

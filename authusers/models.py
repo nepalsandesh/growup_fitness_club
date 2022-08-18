@@ -6,7 +6,6 @@ class UserType(models.TextChoices):
     STAFF =  'ST', 'Staff'
     ADMIN = 'AD', 'Admin'
 
-
 class CustomUserManager(BaseUserManager):
 
     def create_user(self, username, password=None):
@@ -35,14 +34,13 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
     user_type = models.CharField(max_length=20, choices=UserType.choices, default=UserType.STAFF)
-    email = models.EmailField( unique=True,null=True,blank=True)
+    email = models.EmailField( unique=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
     USERNAME_FIELD = 'username'
     objects = CustomUserManager()
 

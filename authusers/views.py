@@ -16,47 +16,13 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from members.views import BasicPagination
 from .permissions import IsAdminOrReadOnly
+from rest_framework_simplejwt.tokens import RefreshToken  
 
-from rest_framework_simplejwt.tokens import RefreshToken
-# API Root 
-# @api_view(['GET'])
-# def api_root(request, format=None):
-#     return Response({
-#         'login':reverse('login', request=request),
-#         'token_refresh':reverse('token_refresh', request=request),
-#         'token_verify':reverse('token_verify', request=request),
-#         'changepassword':reverse('changepassword', request=request),
-#         'userprofile':reverse('userprofile', request=request),
-#         'user'
-#     })
-
-
-# #  # This view is commented because we dont need registeration from frontend
-# class RegisterView(GenericAPIView):
-#     authentication_classes = []
-#     permission_classes = [AllowAny]
-#     serializer_class = UserSerializer
-
-#     def post(self, request, *args, **kwargs):
-#         # print("request data---------------->", request.data)
-#         serializer = UserSerializer(data=request.data)
-        
-#         if serializer.is_valid():
-#             # print(serializer.data)
-#             serializer.save()
-#             return Response({"email":request.data["email"],"message":"account created"},status=status.HTTP_201_CREATED)
-#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-
-
-
-
-  
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     default_error_messages = {
         "no_active_account": ("Invalid username or password")
     }
-
     def validate(self, attrs):
         try:
             data = super().validate(attrs)
@@ -66,8 +32,8 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
             # Add extra responses here
             data['user_type'] = self.user.user_type
-            print("<<<<<<<<<<<<<<<<<CALLEDFROMSerializer")
-            print(data)
+            data['username']=self.user.username
+        
         except ValidationError:
             # raise serializers.ValidationError(default_error_messages)
             data["message"]=default_error_messages
@@ -77,11 +43,10 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    print("<<<<<<<<<<<<<<<<<CALLEDFROMVIEWs")
     serializer_class = MyTokenObtainPairSerializer
     
-#change password
-class ChangePasswordView(generics.UpdateAPIView):
+# change password
+class ChangePasswordView(generics.CreateAPIView):
     """
     An endpoint for changing password.
     """
@@ -97,12 +62,15 @@ class ChangePasswordView(generics.UpdateAPIView):
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         serializer = self.get_serializer(data=request.data)
-
         if serializer.is_valid():
             # Check old password
             if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({"old_password": ["Wrong password."]}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"detail": "Current Password does not match."}, status=status.HTTP_400_BAD_REQUEST)
             # set_password also hashes the password that the user will get
+            if serializer.data.get("new_password")!=serializer.data.get("new_password2"):
+                # return Response({"detail":"New passwords donot match."},status=status.HTTP_400_BAD_REQUEST)
+                raise serializers.ValidationError({"detail":"Password fields didn't match."})
+
             self.object.set_password(serializer.data.get("new_password"))
             self.object.save()
             response = {
@@ -111,17 +79,13 @@ class ChangePasswordView(generics.UpdateAPIView):
                 'message': 'Password updated successfully',
                 'data': []
             }
-
             return Response(response)
-
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserProfileView(generics.ListAPIView):
     serializer_class = UserSerializer
     model = CustomUser
-    
-    
     def get(self,request,*args, **kwargs):
         
         obj=self.request.user
@@ -131,7 +95,8 @@ class UserProfileView(generics.ListAPIView):
                     'username': obj.username,
                     'firstname': obj.first_name,
                     'lastname': obj.last_name,
-                    'created_at':obj.created_at.year
+                    'created_at':obj.created_at.year,
+                    'user_type':obj.user_type
                     
                 }
             return Response(context,status=status.HTTP_200_OK)
@@ -155,7 +120,6 @@ class UserProfileView(generics.ListAPIView):
     
 class LogoutAPIView(APIView):
     permission_classes = (IsAuthenticated,)
-
     def post(self, request):
         try:
             refresh_token = request.data["refresh"]
@@ -164,9 +128,9 @@ class LogoutAPIView(APIView):
 
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST)    
+            return Response(status=status.HTTP_400_BAD_REQUEST) 
+           
 class UsersView(generics.ListCreateAPIView):
-    
     permission_classes=[IsAdminOrReadOnly]
     serializer_class=RegisterSerializer
     
@@ -178,7 +142,6 @@ class UsersView(generics.ListCreateAPIView):
         return queryset
 
 class UserDetailsView(generics.RetrieveUpdateDestroyAPIView):
-    
     serializer_class = UserSerializer
     lookup_field='id'
     def get_queryset(self):

@@ -77,33 +77,25 @@ class Member(models.Model):
         return self.name
 
 
-
-
 class PhysicalDetail(models.Model):
     member = models.OneToOneField(Member, on_delete=models.CASCADE, related_name="physical_details",)
-    weight = models.FloatField(help_text="Kgs", blank=True)
-    neck = models.FloatField(help_text="inches",blank=True)
-    chest = models.FloatField(help_text="inches", blank=True)
-    fore_arms = models.FloatField(help_text="inches", blank=True)
-    arms = models.FloatField(help_text="inches", blank=True)
-    hip = models.FloatField(help_text="inches", blank=True)
-    waist = models.FloatField(help_text="inches", blank=True)
-    thigh = models.FloatField(help_text="inches", blank=True)
-    shoulder = models.FloatField(help_text="inches", blank=True)
-    calves = models.FloatField(help_text="inches", blank=True)
-    height = models.FloatField(help_text="foot", blank=True)
-
-    status = models.BooleanField(default=True)
-
+    weight = models.FloatField(help_text="Kgs",null=True, blank=True)
+    neck = models.FloatField(help_text="inches",null=True,blank=True)
+    chest = models.FloatField(help_text="inches", null=True,blank=True)
+    fore_arms = models.FloatField(help_text="inches",null=True, blank=True)
+    arms = models.FloatField(help_text="inches",null=True, blank=True)
+    hip = models.FloatField(help_text="inches", null=True,blank=True)
+    waist = models.FloatField(help_text="inches", null=True,blank=True)
+    thigh = models.FloatField(help_text="inches", null=True,blank=True)
+    shoulder = models.FloatField(help_text="inches", null=True,blank=True)
+    calves = models.FloatField(help_text="inches", null=True,blank=True)
+    height = models.FloatField(help_text="foot",null=True, blank=True)
 
     def __str__(self):
         return str(self.member.name)
 
 
-
-
 class PackageDetails(models.Model):
-
     PACKAGE_TYPE = (
         ("Basic(Gym & Cardio)", "Basic(Gym & Cardio)"),
         ("Zumba(with Gym & Cardio)", "Zumba(with Gym & Cardio)"),
@@ -142,11 +134,6 @@ class PackageDetails(models.Model):
     receipt_number = models.CharField(max_length=50, blank=True, null=True)
     invoice_number = models.CharField(max_length=50, blank=True, null= True)
 
-    status = models.BooleanField(default=True)
-    
-
-
-
     def __str__(self):
         return "{}-{}-{}months".format( self.member, self.package_type, self.package_period)
 
@@ -184,8 +171,6 @@ class PackageDetails(models.Model):
             return True
         else:
             return False 
-
-    
     
     @property 
     def due_amount(self):

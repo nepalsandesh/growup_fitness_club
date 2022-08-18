@@ -6,7 +6,7 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = "id","username","first_name","last_name","email","user_type"
+        fields = "id","username","first_name","last_name","email","user_type",'password'
 
     def create(self, data):
         return CustomUser.objects.create_user(**data)
@@ -20,6 +20,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     """
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+    new_password2= serializers.CharField(required=True)
     
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
@@ -41,10 +42,10 @@ class LogoutSerializer(serializers.Serializer):
             self.fail('bad_token')
             
 class RegisterSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(
-            required=True,
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())]
-            )
+    # email = serializers.EmailField(
+    #         required=True,
+    #         validators=[UniqueValidator(queryset=CustomUser.objects.all())]
+    #         )
 
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
@@ -76,5 +77,4 @@ class RegisterSerializer(serializers.ModelSerializer):
         
         user.set_password(validated_data['password'])
         user.save()
-
         return user

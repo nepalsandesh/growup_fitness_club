@@ -45,8 +45,8 @@ INSTALLED_APPS = [
     'members',
     'django_filters',
     'authusers',
-    'drf_yasg'
-    
+    'drf_yasg',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -99,15 +99,15 @@ AUTH_USER_MODEL = 'authusers.CustomUser'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
+    # {
+    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    # },
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
@@ -170,6 +170,20 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=100),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(hours=12),
 }
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
+    "CLASS": "django_rest_passwordreset.tokens.RandomNumberTokenGenerator",
+    "OPTIONS": {
+        "min_number": 10000,
+        "max_number": 99999,
+    }
+}
+DJANGO_REST_MULTITOKENAUTH_RESET_TOKEN_EXPIRY_TIME=0.1
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST="smtp.gmail.com"
+EMAIL_PORT="587"
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER='aashishghimire9999@gmail.com'
+EMAIL_HOST_PASSWORD="sxpbovholqfpyasi"
 

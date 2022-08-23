@@ -1,5 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import send_mail 
+from django.dispatch import receiver
+from django.urls import reverse
 
 
 class UserType(models.TextChoices):
@@ -34,7 +38,7 @@ class CustomUserManager(BaseUserManager):
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True)
     user_type = models.CharField(max_length=20, choices=UserType.choices, default=UserType.STAFF)
-    email = models.EmailField( unique=True)
+    email = models.EmailField( unique=True,blank=True,null=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
     is_active = models.BooleanField(default=True)
@@ -54,4 +58,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     
     def get_user_type(self):
         return f'{self.user_type}'
+
+@receiver(reset_password_token_created)
+def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+
+    email_plaintext_message = "Your password reset OTP is  {}".format(reset_password_token.key)
+    admin_emails=CustomUser.objects.filter(is_staff=True).values('email')
+    admin_emails=[i['email'] for i in admin_emails]
+    print("ADMINEMAILS",admin_emails)
+    print("REQUESTEMAIL",reset_password_token.user.email)
+    if reset_password_token.user.email in admin_emails:
+        print("<<<<<<<<<<<",reset_password_token.user.email)
+
+        send_mail(
+            # title:
+            "Password Reset for {title}".format(title="GYM MANAGEMENT SYSTEM"),
+            # message:
+            email_plaintext_message,
+            # from:
+            "aashishghimire9999@gmail.com",
+            # to:
+            [reset_password_token.user.email]
+        )
+    
 
